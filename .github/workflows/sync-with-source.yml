@@ -1,0 +1,33 @@
+name: Sync with source git hub repo
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch: {}
+
+permissions: 
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fetch upstream and update branch
+        run: |
+          git remote add upstream https://github.com/Revilllo7/cinema-booking
+          git fetch upstream
+          git checkout -B sync/upstream upstream/main
+          git push origin sync/upstream --force
+      - name: Update PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create --base main --head sync/upstream \
+            --title "Sync from upsteram" \
+            --body "Auto sync from upstream repo"
+        
+  
