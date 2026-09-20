@@ -25,11 +25,17 @@ jobs:
           git push origin sync/upstream --force
       - name: Update PR
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.SYNC_DEMO1 }}
         run: |
-          gh pr create --base main --head sync/upstream \
-            --title "Sync from upstream" \
-            --body "Auto sync from upstream repo" \
-            || echo "PR already exists"
-        
-  
+          if ! gh api repos/${{ github.repository }}/pulls \
+             -f title="Sync from upstream" \
+             -f head="sync/upstream" \
+             -f base="main" \
+             -f body="Auto sync from upstream repo" 2> log.err; then
+            if grep -qi "already exists" log.err; then
+              echo "PR already exists"
+            else
+              cat log.err
+              exit 1
+            fi
+          fi
