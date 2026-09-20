@@ -24,7 +24,7 @@ jobs:
           git push origin sync/upstream --force
       - name: Update PR
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.SYNC_DEMO1 }}
         run: |
           gh pr create --base main --head sync/upstream \
             --title "Sync from upstream" \
