@@ -19,7 +19,7 @@ jobs:
           fetch-depth: 0
       - name: Fetch upstream and update branch
         run: |
-          git remote add upstream https://github.com/Revilllo7/cinema-booking
+          git remote add upstream https://github.com/yarikshevchuk/conduit-realworld-example-app
           git fetch upstream
           git checkout -B sync/upstream upstream/main
           git push origin sync/upstream --force
