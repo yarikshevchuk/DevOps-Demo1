@@ -34,6 +34,8 @@ jobs:
              -f body="Auto sync from upstream repo" 2> log.err; then
             if grep -qi "already exists" log.err; then
               echo "PR already exists"
+            elif grep -qi "No commits between" log.err; then
+              echo "Nothing to sync right now"
             else
               cat log.err
               exit 1
