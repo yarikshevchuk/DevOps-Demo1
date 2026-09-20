@@ -31,7 +31,7 @@ jobs:
              -f title="Sync from upstream" \
              -f head="sync/upstream" \
              -f base="main" \
-             -f body="Auto sync from upstream repo" 2> log.err; then
+             -f body="Auto sync from upstream repo" > log.err 2>&1; then
             if grep -qi "already exists" log.err; then
               echo "PR already exists"
             elif grep -qi "No commits between" log.err; then
