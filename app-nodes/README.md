@@ -24,6 +24,7 @@ Example:
 DB_URL=jdbc:postgresql://<POSTGRES_MASTER_IP>:5432/<DATABASE_NAME>
 DB_USERNAME=<DATABASE_USER>
 DB_PASSWORD=<DATABASE_PASSWORD>
+```
 
 ## Application Nodes
 
