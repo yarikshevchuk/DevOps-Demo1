@@ -1,6 +1,6 @@
 # PostgreSQL Automated Backups
 
-Automated logical backups of the PostgreSQL cluster are created on the Standby server.
+Automated logical backups of the PostgreSQL cluster are created on the Slave server.
 
 ## Architecture
 
@@ -10,7 +10,7 @@ PostgreSQL Master
         |
         | Streaming Replication
         v
-PostgreSQL Standby
+PostgreSQL Slave
 192.168.50.21
         |
         | Cron
@@ -22,7 +22,7 @@ postgresql-backup.sh
 /var/backups/postgresql/
 ```
 
-Backups are created on the Standby server to avoid running the dump process on the primary PostgreSQL server.
+Backups are created on the Slave server to avoid running the dump process on the primary PostgreSQL server.
 
 ## Backup Script
 
@@ -198,6 +198,6 @@ sudo grep -in "replication_test" /var/backups/postgresql/backup_*.sql | head
 
 Streaming Replication and backups serve different purposes.
 
-The Standby continuously receives changes from the Master. Accidental changes or deletions can therefore also be replicated.
+The Slave continuously receives changes from the Master. Accidental changes or deletions can therefore also be replicated.
 
 The `pg_dumpall` backups provide separate logical copies of the PostgreSQL cluster that can be used for recovery.

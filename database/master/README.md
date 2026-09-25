@@ -158,4 +158,3 @@ current_database | current_user
 -----------------+-------------
 appdb            | appuser
 ```
-

@@ -1,6 +1,6 @@
-# PostgreSQL Standby
+# PostgreSQL Slave
 
-PostgreSQL Standby configuration for the Demo 1 environment.
+PostgreSQL Slave configuration for the Demo 1 environment.
 
 ## Architecture
 
@@ -13,13 +13,13 @@ PostgreSQL Master
        |
        | WAL Streaming Replication
        v
-PostgreSQL Standby
+PostgreSQL Slave
 192.168.50.21:5432
 ```
 
 The Master is the primary PostgreSQL server used by the application.
 
-The Standby maintains a physical copy of the Master by continuously receiving and replaying WAL records.
+The Slave maintains a physical copy of the Master by continuously receiving and replaying WAL records.
 
 ## Network
 
@@ -36,13 +36,13 @@ The VM uses a static IP address.
 - PostgreSQL version: `16`
 - Port: `5432`
 - Master: `192.168.50.20`
-- Standby: `192.168.50.21`
+- Slave: `192.168.50.21`
 - Replication role: `replicator`
 - Replication slot: `slave1_slot`
 
 ## Master Requirements
 
-Before configuring the Standby, the Master must be configured for Streaming Replication.
+Before configuring the Slave, the Master must be configured for Streaming Replication.
 
 The following parameters are configured on the Master:
 
@@ -67,7 +67,7 @@ The following rule must be present in the Master's `pg_hba.conf`:
 host    replication    replicator    192.168.50.21/32    scram-sha-256
 ```
 
-This allows only the Standby VM at `192.168.50.21` to connect using the `replicator` role.
+This allows only the Slave VM at `192.168.50.21` to connect using the `replicator` role.
 
 ## Replication Slot
 
@@ -84,13 +84,13 @@ SELECT slot_name, slot_type, active
 FROM pg_replication_slots;
 ```
 
-When the Standby is connected, `slave1_slot` should be active.
+When the Slave is connected, `slave1_slot` should be active.
 
-The replication slot prevents the Master from removing WAL that is still required by the Standby.
+The replication slot prevents the Master from removing WAL that is still required by the Slave.
 
-## Automated Standby Setup
+## Automated Slave Setup
 
-The `setup-slave.sh` script prepares the Standby and creates its initial copy from the Master.
+The `setup-slave.sh` script prepares the Slave and creates its initial copy from the Master.
 
 Make the script executable:
 
@@ -114,7 +114,7 @@ The script:
 4. Preserves the initial local data directory as `main.old`.
 5. Creates a new empty PostgreSQL data directory.
 6. Uses `pg_basebackup` to create a physical copy of the Master.
-7. Configures the server as a Standby.
+7. Configures the server as a Slave.
 8. Configures the `slave1_slot` replication slot.
 9. Starts PostgreSQL.
 10. Checks the recovery and WAL receiver status.
@@ -145,12 +145,12 @@ Important options:
 -Fp   plain backup format
 -Xs   stream WAL during the backup
 -P    display progress
--R    create Standby configuration
+-R    create Slave configuration
 ```
 
-The `-R` option creates the configuration required for the server to start as a Standby, including `standby.signal` and the Primary connection information.
+The `-R` option creates the configuration required for the server to start as a Slave, including `standby.signal` and the Primary connection information.
 
-## Verification on Standby
+## Verification on Slave
 
 Check the PostgreSQL cluster:
 
@@ -164,7 +164,7 @@ Expected state:
 16  main  5432  online
 ```
 
-Check whether PostgreSQL is running as a Standby:
+Check whether PostgreSQL is running as a Slave:
 
 ```bash
 sudo -u postgres psql -c "SELECT pg_is_in_recovery();"
@@ -187,7 +187,7 @@ The receiver should be connected to `192.168.50.20` and use `slave1_slot`.
 
 ## Verification on Master
 
-On the Master, check connected Standby servers:
+On the Master, check connected Slave servers:
 
 ```sql
 SELECT client_addr, usename, state, sync_state
@@ -230,7 +230,7 @@ INSERT INTO replication_test (message)
 VALUES ('Replication works');
 ```
 
-Then connect to `appdb` on the Standby:
+Then connect to `appdb` on the Slave:
 
 ```bash
 sudo -u postgres psql -d appdb
@@ -248,12 +248,12 @@ Expected result:
 1 | Replication works
 ```
 
-The table must be created only on the Master. It appears on the Standby automatically through Streaming Replication.
+The table must be created only on the Master. It appears on the Slave automatically through Streaming Replication.
 
 ## Important
 
 Streaming Replication is not a backup.
 
-Changes made on the Master, including accidental changes or deletions, can also be replicated to the Standby.
+Changes made on the Master, including accidental changes or deletions, can also be replicated to the Slave.
 
 Separate PostgreSQL backups are configured as another part of the database infrastructure.
