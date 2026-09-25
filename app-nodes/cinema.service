@@ -1,0 +1,15 @@
+[Unit]
+Description=Cinema Booking Spring Boot Application
+After=network.target
+
+[Service]
+User=ubuntuuser2
+WorkingDirectory=/home/ubuntuuser2/DevOps-Demo1
+EnvironmentFile=/etc/cinema/cinema.env
+Environment="SPRING_PROFILES_ACTIVE=dev"
+ExecStart=/usr/bin/java -jar /home/ubuntuuser2/DevOps-Demo1/target/cinema-booking-1.0.0-SNAPSHOT.jar
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
