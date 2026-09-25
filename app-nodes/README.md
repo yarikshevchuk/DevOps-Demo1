@@ -2,6 +2,7 @@
 
 This module describes the deployment of the Spring Boot application
 on two application virtual machines.
+
 ## Application configuration
 
 Before starting the application, configure the database connection.
@@ -11,6 +12,11 @@ The Spring Boot configuration is located at:
 `src/main/resources/application.yml`
 
 The database credentials must not be stored directly in `application.yml`.
+They should be configured in a similar way:
+url: ${DB_URL}
+username: ${DB_USERNAME}
+password: ${DB_PASSWORD}
+
 
 The application uses the following environment variables:
 
@@ -18,13 +24,7 @@ The application uses the following environment variables:
 - `DB_USERNAME` — PostgreSQL username
 - `DB_PASSWORD` — PostgreSQL password
 
-Example:
-
-```text
-DB_URL=jdbc:postgresql://<POSTGRES_MASTER_IP>:5432/<DATABASE_NAME>
-DB_USERNAME=<DATABASE_USER>
-DB_PASSWORD=<DATABASE_PASSWORD>
-```
+And the data should be stored in separate file cinema.env, that is automaticly creating when setup_app.sh is running. 
 
 ## Application Nodes
 
