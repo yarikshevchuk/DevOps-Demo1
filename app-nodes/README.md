@@ -9,13 +9,13 @@ Before starting the application, configure the database connection.
 
 The Spring Boot configuration is located at:
 
-`src/main/resources/application.yml`
+`src/main/resources/application.yml`<br>
 
-The database credentials must not be stored directly in `application.yml`.
-They should be configured in a similar way:
-url: ${DB_URL}
-username: ${DB_USERNAME}
-password: ${DB_PASSWORD}
+The database credentials must not be stored directly in `application.yml`. <br>
+They should be configured in a similar way: <br>
+`url: ${DB_URL}`<br>
+`username: ${DB_USERNAME}`<br>
+`password: ${DB_PASSWORD}`
 
 
 The application uses the following environment variables:
