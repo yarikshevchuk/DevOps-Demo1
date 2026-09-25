@@ -46,8 +46,8 @@ VM2:
 
 The application reads database configuration from environment variables:
 
-DB_URL
-DB_USERNAME
+DB_URL<br>
+DB_USERNAME<br>
 DB_PASSWORD
 
 Database credentials are not stored in GitHub.
