@@ -18,8 +18,11 @@ The VM uses a static IP address. VMware VMnet2 is configured as a NAT network wi
 - Port: `5432`
 - Database: `appdb`
 - Application role: `appuser`
+- Replication role: `replicator`
+- Replication slot: `slave1_slot`
 
-The PostgreSQL Master accepts connections from the internal `192.168.50.0/24` network.
+The PostgreSQL Master accepts application connections from the internal
+`192.168.50.0/24` network and replication connections from the Slave VM.
 
 The application VMs connect to the Master using:
 
@@ -30,6 +33,8 @@ Database: appdb
 Username: appuser
 Password: provided separately
 ```
+
+The Slave connects to the Master using the separate `replicator` role.
 
 Passwords and other secrets must not be stored in Git.
 
@@ -49,19 +54,52 @@ max_replication_slots = 5
 
 The replication parameters prepare the Master for PostgreSQL Streaming Replication with the Slave VM.
 
-## Client Access
+## Client and Replication Access
 
-The following rule is added to `pg_hba.conf`:
+The following application access rule is added to `pg_hba.conf`:
 
 ```text
 host    appdb    appuser    192.168.50.0/24    scram-sha-256
 ```
 
-This allows `appuser` to connect to `appdb` from the internal VMnet2 network using password authentication.
+This allows `appuser` to connect to `appdb` from the internal VMnet2 network.
+
+The following replication rule is also added:
+
+```text
+host    replication    replicator    192.168.50.21/32    scram-sha-256
+```
+
+This allows only the Slave VM (`192.168.50.21`) to connect to the Master
+using the `replicator` role for Streaming Replication.
+
+## Replication Role
+
+The Master contains a separate PostgreSQL role for replication:
+
+```text
+replicator
+```
+
+The role has `LOGIN` and `REPLICATION` privileges and is used only by the
+Slave VM to establish the replication connection.
+
+The replication password is provided through the `REPLICATION_PASSWORD`
+environment variable and is not stored in the repository.
+
+## Replication Slot
+
+The setup script creates the physical replication slot:
+
+```text
+slave1_slot
+```
+
+The Slave uses this slot when receiving WAL records from the Master.
 
 ## Firewall
 
-Port `5432` is available only from the internal network:
+Port `5432` is available from the internal network:
 
 ```bash
 sudo ufw allow from 192.168.50.0/24 to any port 5432 proto tcp
@@ -83,13 +121,16 @@ Make the script executable:
 chmod +x setup-master.sh
 ```
 
-Run it with the application database password:
+Run it with separate passwords for the application and replication roles:
 
 ```bash
-sudo APP_DB_PASSWORD='your_password' ./setup-master.sh
+sudo APP_DB_PASSWORD='app_password' \
+REPLICATION_PASSWORD='replication_password' \
+./setup-master.sh
 ```
 
-The database password is passed through an environment variable and must not be committed to Git.
+Both passwords are passed through environment variables and must not be
+committed to Git.
 
 The script:
 
@@ -98,11 +139,14 @@ The script:
 3. Configures PostgreSQL to accept network connections.
 4. Configures parameters required for Streaming Replication.
 5. Adds the application access rule to `pg_hba.conf`.
-6. Creates the `appuser` PostgreSQL role.
-7. Creates the `appdb` database.
-8. Configures the firewall.
-9. Restarts PostgreSQL.
-10. Performs basic verification.
+6. Adds the Slave replication access rule to `pg_hba.conf`.
+7. Creates the `appuser` PostgreSQL role.
+8. Creates the `replicator` PostgreSQL role.
+9. Creates the `appdb` database.
+10. Creates the `slave1_slot` physical replication slot.
+11. Configures the firewall.
+12. Restarts PostgreSQL.
+13. Performs basic verification.
 
 ## Verification
 
@@ -145,7 +189,7 @@ Test the application database connection:
 psql -h 192.168.50.20 -p 5432 -U appuser -d appdb
 ```
 
-After connecting, the database and user can be verified with:
+After connecting:
 
 ```sql
 SELECT current_database(), current_user;
@@ -158,3 +202,18 @@ current_database | current_user
 -----------------+-------------
 appdb            | appuser
 ```
+
+Verify the replication role:
+
+```bash
+sudo -u postgres psql -c "\du replicator"
+```
+
+Verify the replication slot:
+
+```bash
+sudo -u postgres psql -c \
+"SELECT slot_name, slot_type, active FROM pg_replication_slots;"
+```
+
+After the Slave is configured and connected, `slave1_slot` should be active.

@@ -3,7 +3,7 @@
 set -e
 
 # ---------------------------------
-# PostgreSQL Standby configuration
+# PostgreSQL Slave configuration
 # ---------------------------------
 
 POSTGRES_VERSION="16"
@@ -72,7 +72,7 @@ echo "primary_slot_name = '${REPLICATION_SLOT}'" \
 
 chown postgres:postgres "${PG_DATA}/postgresql.auto.conf"
 
-echo "=== Starting PostgreSQL Standby ==="
+echo "=== Starting PostgreSQL Slave ==="
 
 systemctl start postgresql
 
@@ -94,8 +94,8 @@ sudo -u postgres psql -x -c \
      FROM pg_stat_wal_receiver;"
 
 echo
-echo "PostgreSQL Standby setup completed."
+echo "PostgreSQL Slave setup completed."
 echo "Master: ${MASTER_IP}:${MASTER_PORT}"
-echo "Standby IP: 192.168.50.21"
+echo "Slave IP: 192.168.50.21"
 echo "Replication user: ${REPLICATION_USER}"
 echo "Replication slot: ${REPLICATION_SLOT}"

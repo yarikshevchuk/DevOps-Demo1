@@ -21,6 +21,16 @@ The Master is the primary PostgreSQL server used by the application.
 
 The Slave maintains a physical copy of the Master by continuously receiving and replaying WAL records.
 
+## Prerequisites
+
+Before configuring the Slave:
+
+- PostgreSQL Master must be configured and running at `192.168.50.20`.
+- The Master setup script must be completed successfully.
+- The `replicator` role must exist on the Master.
+- The `slave1_slot` replication slot must exist on the Master.
+- The replication password must be available separately and must not be stored in Git.
+
 ## Network
 
 - Hostname: `db-slave`
