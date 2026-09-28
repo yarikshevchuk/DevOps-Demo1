@@ -102,7 +102,7 @@ The Slave uses this slot when receiving WAL records from the Master.
 Port `5432` is available from the internal network:
 
 ```bash
-sudo ufw allow from 192.168.50.0/24 to any port 5432 proto tcp
+sudo wufw allow from 192.168.50.0/24 to any port 5432 proto tcp
 ```
 
 SSH access is allowed on port `22`:
@@ -177,6 +177,10 @@ Expected result should include:
 
 Check the firewall:
 
+```bash
+sudo ufw show added
+```
+or
 ```bash
 sudo ufw status
 ```
