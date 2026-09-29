@@ -102,7 +102,7 @@ The Slave uses this slot when receiving WAL records from the Master.
 Port `5432` is available from the internal network:
 
 ```bash
-sudo wufw allow from 192.168.50.0/24 to any port 5432 proto tcp
+sudo ufw allow from 192.168.50.0/24 to any port 5432 proto tcp
 ```
 
 SSH access is allowed on port `22`:
