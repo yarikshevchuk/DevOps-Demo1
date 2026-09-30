@@ -178,6 +178,10 @@ Expected result should include:
 Check the firewall:
 
 ```bash
+sudo ufw show added
+```
+or
+```bash
 sudo ufw status
 ```
 

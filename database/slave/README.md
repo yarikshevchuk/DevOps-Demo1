@@ -186,6 +186,12 @@ Expected result:
 t
 ```
 
+Connect to `appdb` on the Slave:
+
+```bash
+sudo -u postgres psql -d appdb
+```
+
 Check the WAL receiver:
 
 ```sql
@@ -196,6 +202,12 @@ FROM pg_stat_wal_receiver;
 The receiver should be connected to `192.168.50.20` and use `slave1_slot`.
 
 ## Verification on Master
+
+Connect to `appdb` on the Master:
+
+```bash
+sudo -u postgres psql -d appdb
+```
 
 On the Master, check connected Slave servers:
 
