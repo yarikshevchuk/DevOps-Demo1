@@ -125,7 +125,7 @@ The script:
    - Add the same secret as a **Secret text** credential.
    - Select it under **Manage Jenkins → System → GitHub → Advanced → Shared secrets**.
 
-### 4. Pipeline job
+	### 4. Pipeline job
 
 1. Create a **Pipeline** job.
 2. Tick **GitHub hook trigger for GITScm polling**.
@@ -145,5 +145,3 @@ Add the App VM key printed by the script to `~/.ssh/authorized_keys` of the depl
 | `ip route` on the VM                    | `default via 192.168.50.2`  |
 | `systemctl status jenkins smee-jenkins` | both`active (running)`      |
 | Push a commit to the repo                 | a new build starts in Jenkins |
-
-If the VM can reach the host but not the internet, the gateway is set to `.1` instead of `.2`.
