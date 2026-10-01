@@ -82,7 +82,8 @@ From the host:
 ```bash
 scp jenkins-vm-setup.sh <user>@192.168.50.15:~
 ssh <user>@192.168.50.15
-sudo SMEE_URL=https://smee.io/<private_channel> bash jenkins-vm-setup.sh
+chmod +x jenkins-vm-setup.sh
+sudo SMEE_URL=https://smee.io/<private_channel> ./jenkins-vm-setup.sh
 ```
 
 The script:
