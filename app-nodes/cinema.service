@@ -6,7 +6,7 @@ After=network.target
 User=__USER__
 WorkingDirectory=__HOME__/DevOps-Demo1
 EnvironmentFile=/etc/cinema/cinema.env
-Environment="SPRING_PROFILES_ACTIVE=dev"
+Environment="SPRING_PROFILES_ACTIVE=dev, demo-data"
 ExecStart=/usr/bin/java -jar __HOME__/DevOps-Demo1/target/cinema-booking-1.0.0-SNAPSHOT.jar
 Restart=always
 RestartSec=5
