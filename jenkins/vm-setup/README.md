@@ -1,5 +1,5 @@
 # Jenkins VM — Setup Guide
-  
+   
 How to set up the team's Jenkins VM with `jenkins-vm-setup.sh`, and what has to be configured by hand afterwards.
 
 | Item          | Value                         |
