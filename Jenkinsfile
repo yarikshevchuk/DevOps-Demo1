@@ -9,7 +9,7 @@ pipeline {
     }
 
     environment {
-        DEPLOY_USER = 'shevua'
+        DEPLOY_USER = 'deploy'
         JAR     = 'cinema-booking-1.0.0-SNAPSHOT.jar'
         APP_DIR = '/home/shevua/DevOps-Demo1/target'
     }
